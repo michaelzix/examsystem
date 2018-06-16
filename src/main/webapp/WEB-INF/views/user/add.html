@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+      #include("../layout/common.html")
+  </head>
+  
+  <body>
+    <div class="weadmin-body">
+        <form class="layui-form">
+            <input type="hidden" name="user.id" value="#(user.id??)">
+          <div class="layui-form-item">
+              <label for="username" class="layui-form-label">
+                  <span class="we-red">*</span>登录名
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="username" name="user.username" required="" lay-verify="required" value="#(user.username??)"
+                  autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                  <span class="we-red">*</span>将会成为您唯一的登入名
+              </div>
+          </div>
+
+            #if(user.id == null)
+            <div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label">
+                    <span class="we-red">*</span>密码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="password" id="L_pass" name="user.password" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    6到16个字符
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">
+                    <span class="we-red">*</span>确认密码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="password" id="L_repass" name="repass" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            #end
+          <div class="layui-form-item">
+              <label for="phone" class="layui-form-label">
+                  <span class="we-red">*</span>手机
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="phone" name="user.phone" required="true" lay-verify="phone" value="#(user.phone??)"
+                  autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                  <span class="we-red">*</span>将会成为您唯一的登入名
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="L_email" class="layui-form-label">
+                  <span class="we-red">*</span>邮箱
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="L_email" name="user.email" required="true" lay-verify="email" value="#(user.email??)"
+                  autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                  <span class="we-red">*</span>
+              </div>
+          </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"> <span class="we-red">*</span>状态</label>
+                <div class="layui-input-inline">
+                    <select name="user.status" lay-verify="required">
+                        <option value=""></option>
+                        <option #(user.status =="启用"?"selected='selected'":"" ) value="启用">启用</option>
+                        <option #(user.status =="禁用"?"selected='selected'":"" ) value="禁用">禁用</option>
+                    </select>
+                </div>
+           </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"> <span class="we-red">*</span>角色</label>
+                <div class="layui-input-inline">
+                    <select name="user.roleId" lay-verify="required">
+                        <option value=""></option>
+                    	#for(role : roleList)
+                    	   #if(role.id == user.roleId)
+                        	<option selected='selected' value="#(role.id)">#(role.name)</option>
+                        	#else
+                        	<option  value="#(role.id)">#(role.name)</option>
+                        	#end
+                    	#end 
+                    </select>
+                </div>
+           </div>
+          <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label"></label>
+              <button  class="layui-btn" lay-filter="add" lay-submit="">保存</button>
+          </div>
+      </form>
+    </div>
+    <script type="text/javascript">
+        layui.extend({
+					admin: '/asset/common/js/admin'
+		});
+        layui.use(['form','layer','admin','jquery'], function(){
+          var form = layui.form,
+          	admin = layui.admin,
+          	layer = layui.layer,
+            $ =layui.jquery;
+          //自定义验证规则
+
+          form.verify({
+            password:[/(.+){6,12}$/, '密码必须6到12位'],
+              "repass":function(value){
+                if($('#L_pass').val()!=$('#L_repass').val()){
+                    return '两次密码不一致';
+                }
+            }
+          });
+          //监听提交
+          form.on('submit()', function(data){
+            $.post("/user/save",data.field,function(data){
+                    if(data.status == 0){
+                        //发异步，把数据提交给php
+                        layer.alert("增加成功", {icon: 6},function () {
+                            // 获得frame索引
+                            var index = parent.layer.getFrameIndex(window.name);
+
+                            //关闭当前frame
+                            parent.layer.close(index);
+
+                        });
+                        parent.location.replace(parent.location.href);
+                    }else{
+                        layer.msg(data.msg);
+                    }
+
+            });
+            return false;
+          });
+        });
+    </script>
+  </body>
+
+</html>

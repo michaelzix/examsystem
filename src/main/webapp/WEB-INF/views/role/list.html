@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		#include("../layout/common.html")
+	</head>
+	<body>
+		<div class="weadmin-nav">
+			<span class="layui-breadcrumb">
+				<a href="">首页</a>
+				<a href="">角色管理</a>
+        		<a><cite>角色列表</cite></a>
+      		</span>
+			<a class="layui-btn layui-btn-sm" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+				<i class="layui-icon" style="line-height:30px">ဂ</i></a>
+		</div>
+		<div class="weadmin-body">
+			<div class="layui-row">
+				<form class="layui-form layui-col-md12 we-search" >
+					<div class="layui-inline">
+						<input class="layui-input" type="text"  placeholder="开始日期" name="start" id="start" value="">
+					</div>
+					<div class="layui-inline">
+						<input class="layui-input" type="text" placeholder="截止日期" name="end" id="end" value="">
+					</div>
+					<div class="layui-inline">
+						<input type="text" name="name" id="name" placeholder="请输入角色名" autocomplete="off" class="layui-input" value="">
+					</div>
+					<button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
+				</form>
+			</div>
+			<div class="weadmin-block">
+				<button class="layui-btn layui-btn-danger" style="display:none" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+				<button class="layui-btn" onclick="WeAdminShow('添加角色','/role/load')"><i class="layui-icon"></i>添加</button>
+			</div>
+			<table  class="layui-table" lay-filter="test"></table>
+			<table id="list" class="layui-table" lay-data="{url:'/role/listJSON',page:true,id:'idTest',request:{pageName: 'pageNum',limitName:'pageSize'},limit:#(pagesize),limits:#(pagesizeRank)}" lay-filter="test">
+				  <thead>
+				    <tr>
+				     
+				      <th lay-data="{field:'id', width:80, sort: true}">ID</th>
+				      <th lay-data="{field:'name'}">角色名</th>
+				      <th lay-data="{field:'create_time',sort:true}">注册时间</th>
+				      <th lay-data="{field:'update_time',sort:true}">更新时间</th>
+				      <th lay-data="{field:'status'}">状态</th>
+				      <th lay-data="{fixed: 'right',align:'center', toolbar: '#barDemo'}">操作</th>
+				    </tr>
+				  </thead>
+				</table>
+		</div>
+		<script type="text/html" id="checkDemo">
+			 <th lay-data="{fixed: 'left',align:'center', toolbar:'#checkDemo'}">选择</th>
+			<div class="layui-unselect header layui-form-checkbox" lay-skin="primary" lay-event="checked"  ><i class="layui-icon">&#xe605;</i></div>	
+		</script>
+		<script type="text/html" id="barDemo">
+  			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+		</script>
+		<script>
+            layui.use(['table','jquery','form'], function(){
+                var table = layui.table;
+                var $ = layui.jquery;
+                var form = layui.form;
+                var listUrl = "/role/listJSON";
+                var delteUrl = "/role/delete";
+				//监听工具条
+				table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+					  var data = obj.data; //获得当前行数据
+					  var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+					  var tr = obj.tr; //获得当前行 tr 的DOM对象
+					 //alert(JSON.stringify(data));
+					 if(layEvent === 'del'){ //删除
+					 	layer.confirm('确认要删除吗？', function(index) {
+							//发异步删除数据
+				            $.post(delteUrl,{"ids":data.id},function(data){
+				                if(data.status == 0){
+				                    layer.msg(data.msg, {
+				                        icon: 1,
+				                        time: 1000
+				                    });
+				                    tableReload();
+				                }else{
+				                    layer.msg(data.msg);
+				                }
+				                 layer.close(index);
+				            });
+				
+						});
+					  } else if(layEvent === 'edit'){ //编辑
+					     WeAdminShow('编辑','/role/load?id='+data.id);
+					  }
+				});
+                function tableReload(obj){
+                	table.reload("idTest",{
+	                    	 url: listUrl,
+	                    	 where:obj || ""
+	                  })
+	             }   
+      			form.on('submit(search)', function(data){
+				  //console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+				  //console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+				  //console.log(JSON.stringify(data.field)) //当前容器的全部表单字段，名值对形式：{name: value}
+				  tableReload(data.field)
+				  return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+				});
+            });
+		</script>
+	</body>
+</html>

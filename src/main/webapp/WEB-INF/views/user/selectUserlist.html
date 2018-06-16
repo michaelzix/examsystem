@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		#include("../layout/common.html")
+	</head>
+	<body>
+		<div class="weadmin-nav">
+			<span class="layui-breadcrumb">
+				<a href="">首页</a>
+				<a href="">用户信息</a>
+        		<a><cite>选择用户列表</cite></a>
+      		</span>
+			<a class="layui-btn layui-btn-sm" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+				<i class="layui-icon" style="line-height:30px">ဂ</i></a>
+		</div>
+		<div class="weadmin-body">
+			<div class="layui-row">
+				<form class="layui-form layui-col-md12 we-search" >
+					<div class="layui-inline">
+						<input type="text" name="name" id="name" placeholder="请输入姓名" autocomplete="off" class="layui-input" value="">
+					</div>
+					<button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
+				</form>
+			</div>
+			<div class="weadmin-block">
+				<button class="layui-btn" id="ok"><i class="layui-icon"></i>确定</button>
+			</div>
+			<table  class="layui-table" lay-filter="test"></table>
+			<table id="list" class="layui-table" lay-data="{url:'/userInfo/listJSON',page:true,id:'idTest',request:{pageName: 'pageNum',limitName:'pageSize'},limit:#(pagesize),limits:#(pagesizeRank)}" lay-filter="test">
+				  <thead>
+				    <tr>
+				      <th lay-data="{fixed: 'sys_user_id',align:'center',type:'checkbox'}">选择</th>
+				      <th lay-data="{field:'id', width:80, sort: true}">ID</th>
+				      <th lay-data="{field:'student_code', sort: true}">学号</th>
+				      <th lay-data="{field:'cnname'}">姓名</th>
+				      <th lay-data="{field:'_class'}">班级</th>
+				      <th lay-data="{field:'department'}">院系</th>
+				      <th lay-data="{field:'age',sort:true}">年龄</th>
+				    </tr>
+				  </thead>
+				</table>
+		</div>
+		<script>
+            layui.use(['table','jquery','form'], function(){
+                var table = layui.table;
+                var $ = layui.jquery;
+                var form = layui.form;
+                var listUrl = "/userInfo/listJSON";
+                var delteUrl = "/userInfo/delete";
+				//监听工具条
+				
+				$("#ok").on("click",function(){
+					var checkStatus = table.checkStatus('idTest');
+					var  data = checkStatus.data; 
+					var  userIds = "";
+					var usernames = "";
+					for(var i =0; i < data.length; i++){
+					    userIds +=";"+data[i].sys_user_id;
+					    usernames +=";"+data[i].cnname;
+					}
+					if(userIds != ""){
+						userIds = userIds.substring(1);
+					}
+					if(usernames != ""){
+						usernames = usernames.substring(1);
+					}
+					//alert("usernames="+usernames+",userIds="+userIds);
+					
+					parent.$("#userIds").val(userIds);
+					parent.$("#userNames").val(usernames);
+					var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+					parent.layer.close(index);
+				});
+				
+			
+				
+				/*
+				table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+					  var data = obj.data; //获得当前行数据
+					  var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+					  var tr = obj.tr; //获得当前行 tr 的DOM对象
+					 //alert(JSON.stringify(data));
+					 if(layEvent === 'del'){ //删除
+					 	layer.confirm('确认要删除吗？', function(index) {
+							//发异步删除数据
+				            $.post(delteUrl,{"ids":data.id},function(data){
+				                if(data.status == 0){
+				                    layer.msg(data.msg, {
+				                        icon: 1,
+				                        time: 1000
+				                    });
+				                    tableReload();
+				                }else{
+				                    layer.msg(data.msg);
+				                }
+				                 layer.close(index);
+				            });
+				
+						});
+					  } else if(layEvent === 'edit'){ //编辑
+					     WeAdminShow('编辑','/userInfo/load?id='+data.id);
+					  }
+				});
+				*/
+                function tableReload(obj){
+                	table.reload("idTest",{
+	                    	 url: listUrl,
+	                    	 where:obj || "",
+	                  })
+	             }   
+      			form.on('submit(search)', function(data){
+				  //console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+				  //console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+				  //console.log(JSON.stringify(data.field)) //当前容器的全部表单字段，名值对形式：{name: value}
+				  tableReload(data.field)
+				  return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+				});
+            });
+		</script>
+	</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <head>
+        #include("layout/common.html")
+    </head>
+</head>
+<body class="login-bg">
+    
+    <div class="login">
+        <div class="message">在线考试系统登录</div>
+        <div id="darkbannerwrap"></div>
+        
+        <form method="post" class="layui-form" >
+
+            <input name="username" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
+            <hr class="hr15">
+            <input name="password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
+            <hr class="hr15">
+            <div class="layui-form-item">
+                <div class="layui-input-inline" style="padding-top:10px;">
+                    <input name="verifyCode" lay-verify="required" placeholder="验证码"   class="layui-input">
+                </div>
+                <label  class="layui-form-label">
+                    <img src="/verifyCode" id="verifyCode" onclick="refresh()" width="100px" height="40px">
+                </label>
+            </div>
+            <hr class="hr15">
+              <input class="loginin" value="登录" lay-submit lay-filter="login"  type="submit"> 
+            <hr class="hr20" >
+            <input class="loginin" value="注册" onclick="openRegister()" lay-filter="register"  type="button">
+        </form>
+    </div>
+
+    <script type="text/javascript">
+
+        layui.extend({
+            admin: '/asset/common/js/admin'
+        });
+        layui.use(['form','admin','jquery'], function(){
+          var form = layui.form
+            ,admin = layui.admin
+           ,$ = layui.jquery;
+        
+          form.on('submit(login)', function(data){
+            $.post("/loginJSON",data.field,function(data){
+            	//alert(JSON.stringify(data));
+            	if(data.status == 0){
+                    //发异步，把数据提交给php
+                    layer.alert("登录成功", {icon: 6},function () {
+                        // 获得frame索引
+							document.location="/";
+                    });
+                }else{
+                    layer.msg(data.msg);
+                    refresh();
+                }
+            });
+            return false;
+          });
+        });
+        function refresh(){
+        	var src= $("#verifyCode").prop("src")
+            $("#verifyCode").prop("src",src+"?rnd="+Math.random());
+        }
+        function openRegister(){
+        	layer.open({
+        		  type:2, 
+        		  content: '/register', //这里content是一个普通的String
+        		  area: ['600px', '500px']
+        	});
+        }
+    </script>  
+    <!-- 底部结束 -->
+</body>
+</html>

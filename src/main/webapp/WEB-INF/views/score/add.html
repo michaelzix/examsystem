@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      #include("../layout/common.html")
+  </head>
+  <body>
+    <div class="weadmin-body">
+        <form class="layui-form">
+            <input type="hidden" name="score.id" value="#(score.id??)">
+            <input type="hidden" name="score.userId" value="#(score.userId??)">
+            <input type="hidden" name="score.paperId" value="#(score.paperId??)">
+             <div class="layui-form-item">
+                <label class="layui-form-label"> <span class="we-red">*</span>课程名</label>
+                <div class="layui-input-inline">
+                   <input type="text" id="name" name="score.name" required=""  value="#(score.name??)"
+	                  autocomplete="off" class="layui-input">
+                </div>
+	         </div>
+            <div class="layui-form-item">
+              <label for="scorename" class="layui-form-label">
+                  <span class="we-red">*</span>学号
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="studentCode" name="score.studentCode" required="" lay-verify="number" value="#(score.studentCode??)"
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="scorename" class="layui-form-label">
+                  <span class="we-red">*</span>姓名
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="cnname" name="score.cnname" required="" lay-verify="required" value="#(score.cnname??)"
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="scorename" class="layui-form-label">
+                  <span class="we-red">*</span>班级
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="classStr" name="score.classStr" required="" lay-verify="required" value="#(score.classStr??)"
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+		  <div class="layui-form-item">
+              <label for="scorename" class="layui-form-label">
+                  <span class="we-red">*</span>院系
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="_class" name="score.department" required="" lay-verify="required" value="#(score.department??)"
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+	         <div class="layui-form-item">
+              <label for="userInfoname" class="layui-form-label">
+                  <span class="we-red">*</span>考试时间
+              </label>
+              <div class="layui-input-inline">
+                  <input class="layui-input" type="text" lay-verify="required" id="ksTime"  name="score.ksTime" id="start" value="#date(score.ksTime,"yyyy-MM-dd HH:mm:ss")">
+              </div>
+          </div>
+           <div class="layui-form-item">
+              <label for="scorename" class="layui-form-label">
+                  <span class="we-red">*</span>得分
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="_class" name="score.score" required="" lay-verify="number" value="#(score.score??)"
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+	          <div class="layui-form-item">
+	              <label  class="layui-form-label"></label>
+	              <button  class="layui-btn" lay-filter="add" lay-submit="">保存</button>
+	          </div>
+      </form>
+    </div>
+    <script type="text/javascript">
+        layui.extend({
+					admin: '/asset/common/js/admin'
+		});
+
+
+        layui.use(['form','layer','admin','jquery','laydate'], function(){
+          var form = layui.form,
+          	admin = layui.admin,
+          	layer = layui.layer,
+            $ =layui.jquery,
+            laydate = layui.laydate;
+          laydate.render({ 
+        	  elem: '#ksTime',
+        	  format: 'yyyy-MM-dd HH:mm:ss', //可任意组合
+        	  type:"datetime"
+        	});
+          //监听提交
+          form.on('submit()', function(data){
+            $.post("/score/save",data.field,function(data){
+                    if(data.status == 0){
+                        //发异步，把数据提交给php
+                        layer.alert("增加成功", {icon: 6},function () {
+                            // 获得frame索引
+                            var index = parent.layer.getFrameIndex(window.name);
+
+                            //关闭当前frame
+                            parent.layer.close(index);
+
+                        });
+                        parent.location.replace(parent.location.href);
+                    }else{
+                        layer.msg(data.msg);
+                    }
+
+            });
+            return false;
+          });
+        });
+    </script>
+  </body>
+
+</html>

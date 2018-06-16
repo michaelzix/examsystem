@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+      #include("../layout/common.html")
+  </head>
+  
+  <body>
+    <div class="weadmin-body">
+        <form class="layui-form" lay-filter="paper">
+            <input type="hidden" name="paper.id" value="#(paper.id??)">
+            <div class="layui-form-item">
+                <label class="layui-form-label"> <span class="we-red">*</span>试题名称</label>
+                <div class="layui-input-block">
+                     <textarea placeholder="请输入内容" class="layui-textarea" name="paper.name" lay-verify="required" >#(paper.name??)</textarea>
+                </div>
+	         </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"> <span class="we-red">*</span>参加的学生</label>
+                <div class="layui-input-block">
+                	 <input type="hidden" id="userIds" name="paper.userIds" value="#(paper.userIds)">
+                     <textarea  class="layui-textarea" id="userNames" name="paper.userNames" lay-filter="userIds" lay-verify="required" readonly="readonly" >#(paper.userNames??)</textarea>
+                </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>单选题数量</label>
+	            <div class="layui-input-block">
+	                  <input type="text" id="dxtCount" name="paper.dxtCount" required="number" lay-verify="number" value="#(paper.dxtCount??)"
+	                  autocomplete="off" class="layui-input">
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>单选题分数</label>
+	            <div class="layui-input-block">
+	                  <input type="text" id="dxtScore" name="paper.dxtScore" required="number" lay-verify="number"  value="#(paper.dxtScore??)"
+	                  autocomplete="off" class="layui-input">
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>多选题数量</label>
+	            <div class="layui-input-block">
+	                  <input type="text" id="duoxtCount" name="paper.duoxtCount" required="number" lay-verify="number"  value="#(paper.duoxtCount??)"
+	                  autocomplete="off" class="layui-input">
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>多选题分数</label>
+	            <div class="layui-input-block">
+	                  <input type="text" id="duoxtScore" name="paper.duoxtScore" required="number" lay-verify="number" value="#(paper.duoxtScore??)"
+	                  autocomplete="off" class="layui-input">
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>判断题数量</label>
+	            <div class="layui-input-block">
+	                  <input type="text" id="pdtCount" name="paper.pdtCount" required="number"   value="#(paper.pdtCount??)"
+	                  autocomplete="off" class="layui-input">
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>判断题分数</label>
+	            <div class="layui-input-block">
+	                  <input type="text" id="pdtScore" name="paper.pdtScore" required="number"  value="#(paper.pdtScore??)"
+	                  autocomplete="off" class="layui-input">
+	            </div>
+	         </div>
+	          <div class="layui-form-item">
+	              <label for="userInfoname" class="layui-form-label">
+	                  <span class="we-red">*</span>开始时间
+	              </label>
+	              <div class="layui-input-inline">
+	                  <input class="layui-input" type="text" lay-verify="required" id="ksTime" name="paper.ksTime" value="#date(paper.ksTime??,"yyyy-MM-dd HH:mm:ss")">
+	              </div>
+	          </div>
+	          <div class="layui-form-item">
+	              <label for="userInfoname" class="layui-form-label">
+	                  <span class="we-red">*</span>结束时间
+	              </label>
+	              <div class="layui-input-inline">
+	                  <input class="layui-input" type="text" lay-verify="required" id="jsTime" name="paper.jsTime" value="#date(paper.jsTime??,"yyyy-MM-dd HH:mm:ss")">
+	              </div>
+	          </div>
+	           <div class="layui-form-item">
+                <label class="layui-form-label"> <span class="we-red">*</span>试题状态</label>
+                <div class="layui-input-inline">
+                    <select name="paper.status" lay-verify="required" lay-filter="type">
+                        <option #(paper.type =="下线"?"selected='selected'":"" ) value="下线">下线</option>
+                        <option #(paper.type=="上线"?"selected='selected'":"" ) value="上线">上线</option>
+                    </select>
+                </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label">总分</label>
+	            <div class="layui-input-block">
+	                  <input type="hidden" id="totalScore" name="paper.totalScore" readonly="readonly" value="#(paper.totalScore??)"
+	                  class="layui-input">
+	                  #number(paper.totalScore??,"###.##")
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label">创建人</label>
+	            <div class="layui-input-block">
+	                  #(paper.createName??)
+	            </div>
+	         </div>
+	         <div class="layui-form-item">
+	              <label  class="layui-form-label"></label>
+	              <button  class="layui-btn" lay-filter="add" lay-submit="">保存</button>
+	          </div>
+      </form>
+    </div>
+    <script type="text/javascript">
+        layui.extend({
+					admin: '/asset/common/js/admin'
+		});
+
+
+
+        layui.use(['form','layer','admin','jquery','laydate'], function(){
+          var form = layui.form,
+          	admin = layui.admin,
+          	layer = layui.layer,
+          	$ =layui.jquery,
+            laydate = layui.laydate;
+          laydate.render({ 
+        	  elem: '#ksTime',
+        	  format: 'yyyy-MM-dd HH:mm:ss', //可任意组合
+        	  type:"datetime"
+        	});
+          laydate.render({ 
+        	  elem: '#jsTime',
+        	  format: 'yyyy-MM-dd HH:mm:ss', //可任意组合
+        	  type:"datetime"
+        	});
+			
+			
+			$("#userNames").on("click",function(){
+					layer.open({
+						type:2,
+						content:"/userInfo/list",
+						area:["900px","500px"],
+						offset: '100px',
+						moveOut:true
+					});
+					
+			});
+
+
+          //监听提交
+          form.on('submit()', function(data){
+            $.post("/paper/save",data.field,function(data){
+                    if(data.status == 0){
+                        //发异步，把数据提交给php
+                        layer.alert("增加成功", {icon: 6},function () {
+                            // 获得frame索引
+                            var index = parent.layer.getFrameIndex(window.name);
+
+                            //关闭当前frame
+                            parent.layer.close(index);
+
+                        });
+                        parent.location.replace(parent.location.href);
+                    }else{
+                        layer.msg(data.msg);
+                    }
+
+            });
+            return false;
+          });
+        });
+    </script>
+  </body>
+
+</html>

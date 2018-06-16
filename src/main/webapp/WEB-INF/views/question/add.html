@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+      #include("../layout/common.html")
+  </head>
+  
+  <body>
+    <div class="weadmin-body">
+        <form class="layui-form">
+            <input type="hidden" name="question.id" value="#(question.id??)">
+             <div class="layui-form-item">
+                <label class="layui-form-label"> <span class="we-red">*</span>试题类型</label>
+                <div class="layui-input-inline">
+                    <select name="question.type" lay-verify="required" lay-filter="type">
+                        <option #(question.type =="单选题"?"selected='selected'":"" ) value="单选题">单选题</option>
+                        <option #(question.type=="多选题"?"selected='selected'":"" ) value="多选题">多选题</option>
+                        <option #(question.type=="判断题"?"selected='selected'":"" ) value="判断题">判断题</option>
+                    </select>
+                </div>
+	         </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"> <span class="we-red">*</span>试题内容</label>
+                <div class="layui-input-block">
+                     <textarea placeholder="请输入内容" class="layui-textarea" name="question.content" lay-verify="required" >#(question.content??)</textarea>
+                </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label">A.</label>
+	            <div class="layui-input-block">
+	                  <input type="text" id="option1" name="question.option1" required=""  value="#(question.option1??)"
+	                  autocomplete="off" class="layui-input">
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label">B.</label>
+	            <div class="layui-input-block">
+	                  <input type="text" id="option2" name="question.option2" required=""  value="#(question.option2??)"
+	                  autocomplete="off" class="layui-input">
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label">C.</label>
+	            <div class="layui-input-block">
+	                  <input type="text" id="option3" name="question.option3" required=""  value="#(question.option3??)"
+	                  autocomplete="off" class="layui-input">
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label">D.</label>
+	            <div class="layui-input-block">
+	                  <input type="text" id="option4" name="question.option4" required=""  value="#(question.option4??)"
+	                  autocomplete="off" class="layui-input">
+	            </div>
+	         </div>	 
+	         <div class="layui-form-item">
+	              <label  class="layui-form-label">
+	                  <span class="we-red">*</span>答案
+	              </label>
+	              <div class="layui-input-inline">
+	                  <input type="text" id="answer" name="question.answer" required="" lay-verify="required" value="#(question.answer??)"
+	                  autocomplete="off" class="layui-input">
+	              </div>
+	          </div>
+	          <div class="layui-form-item">
+	              <label  class="layui-form-label">
+	                  <span class="we-red">*</span>来源
+	              </label>
+	              <div class="layui-input-block">
+	                    <textarea placeholder="请输入内容" class="layui-textarea" name="question.source" lay-verify="required" >#(question.source??)</textarea>
+	              </div>
+	          </div>
+	          <div class="layui-form-item">
+	              <label  class="layui-form-label">
+	                  <span class="we-red">*</span>关键字
+	              </label>
+	              <div class="layui-input-block">
+	                  <textarea placeholder="请输入内容" class="layui-textarea" name="question.keyWord" lay-verify="required" >#(question.keyWord??)</textarea>
+	              </div>
+	          </div>
+	          <div class="layui-form-item">
+	              <label  class="layui-form-label"></label>
+	              <button  class="layui-btn" lay-filter="add" lay-submit="">保存</button>
+	          </div>
+      </form>
+    </div>
+    <script type="text/javascript">
+        layui.extend({
+					admin: '/asset/common/js/admin'
+		});
+
+
+
+        layui.use(['form','layer','admin','jquery'], function(){
+          var form = layui.form,
+          	admin = layui.admin,
+          	layer = layui.layer,
+            $ =layui.jquery;
+        #if(question.type == "判断题")
+                $(function(){
+                    $(".option").addClass("uhide");
+                });
+
+        #end
+			form.on("select(type)",function(data){
+				var value = data.value;
+				if(value == "单选题"){
+					$(".option").removeClass("uhide");
+				}else if(value == "多选题"){
+                    $(".option").removeClass("uhide");
+				}else if(value=="判断题"){
+					$(".option").addClass("uhide");
+				}
+			});
+
+
+          //监听提交
+          form.on('submit()', function(data){
+            $.post("/question/save",data.field,function(data){
+                    if(data.status == 0){
+                        //发异步，把数据提交给php
+                        layer.alert("增加成功", {icon: 6},function () {
+                            // 获得frame索引
+                            var index = parent.layer.getFrameIndex(window.name);
+
+                            //关闭当前frame
+                            parent.layer.close(index);
+
+                        });
+                        parent.location.replace(parent.location.href);
+                    }else{
+                        layer.msg(data.msg);
+                    }
+
+            });
+            return false;
+          });
+        });
+    </script>
+  </body>
+
+</html>

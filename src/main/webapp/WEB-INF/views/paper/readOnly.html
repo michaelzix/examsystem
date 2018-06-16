@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+      #include("../layout/common.html")
+  </head>
+  
+  <body>
+    <div class="weadmin-body">
+        <form class="layui-form" lay-filter="paper">
+            <input type="hidden" name="paper.id" value="#(paper.id??)">
+            <div class="layui-form-item">
+                <label class="layui-form-label"> <span class="we-red">*</span>试题名称</label>
+                <div class="layui-form-label">
+                     #(paper.name??)
+                </div>
+	         </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"> <span class="we-red">*</span>参加的学生</label>
+                <div class="layui-form-label">
+                    #(paper.userNames??)
+                </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>单选题数量</label>
+	            <div class="layui-form-label">
+	                  #(paper.dxtCount??)
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>单选题分数</label>
+	            <div class="layui-form-label">
+	                  #(paper.dxtScore??)
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>多选题数量</label>
+	            <div class="layui-form-label">
+	                  #(paper.duoxtCount??)
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>多选题分数</label>
+	            <div class="layui-form-label">
+	                 #(paper.duoxtScore??)
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>判断题数量</label>
+	            <div class="layui-form-label">
+	                  #(paper.pdtCount??)
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label"><span class="we-red">*</span>判断题分数</label>
+	            <div class="layui-form-label">
+	                 #(paper.pdtScore??)
+	            </div>
+	         </div>
+	          <div class="layui-form-item">
+	              <label  class="layui-form-label">
+	                  <span class="we-red">*</span>开始时间
+	              </label>
+	              <div class="layui-input-inline">
+	                  #date(paper.ksTime??,"yyyy-MM-dd HH:mm:ss")
+	              </div>
+	          </div>
+	          <div class="layui-form-item">
+	              <label class="layui-form-label">
+	                  <span class="we-red">*</span>结束时间
+	              </label>
+	              <div class="layui-input-inline">
+	                 #date(paper.jsTime??,"yyyy-MM-dd HH:mm:ss")
+	              </div>
+	          </div>
+	           <div class="layui-form-item">
+                <label class="layui-form-label"> <span class="we-red">*</span>试题状态</label>
+                <div class="layui-input-inline">
+                    #(paper.type) 
+                </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label">总分</label>
+	            <div class="layui-form-label">
+	                  #number(paper.totalScore??,"###.##")
+	            </div>
+	         </div>
+	         <div class="layui-form-item option">
+	           	<label class="layui-form-label">创建人</label>
+	            <div class="layui-form-label">
+	                  #(paper.createName??)
+	            </div>
+	         </div>
+      </form>
+    </div>
+    <script type="text/javascript">
+        layui.extend({
+					admin: '/asset/common/js/admin'
+		});
+
+
+
+        layui.use(['form','layer','admin','jquery','laydate'], function(){
+          var form = layui.form,
+          	admin = layui.admin,
+          	layer = layui.layer,
+          	$ =layui.jquery,
+            laydate = layui.laydate;
+          laydate.render({ 
+        	  elem: '#ksTime',
+        	  format: 'yyyy-MM-dd HH:mm:ss', //可任意组合
+        	  type:"datetime"
+        	});
+          laydate.render({ 
+        	  elem: '#jsTime',
+        	  format: 'yyyy-MM-dd HH:mm:ss', //可任意组合
+        	  type:"datetime"
+        	});
+			
+			
+			$("#userNames").on("click",function(){
+					layer.open({
+						type:2,
+						content:"/userInfo/list",
+						area:["900px","500px"],
+						offset: '100px',
+						moveOut:true
+					});
+					
+			});
+
+
+          //监听提交
+          form.on('submit()', function(data){
+            $.post("/paper/save",data.field,function(data){
+                    if(data.status == 0){
+                        //发异步，把数据提交给php
+                        layer.alert("增加成功", {icon: 6},function () {
+                            // 获得frame索引
+                            var index = parent.layer.getFrameIndex(window.name);
+
+                            //关闭当前frame
+                            parent.layer.close(index);
+
+                        });
+                        parent.location.replace(parent.location.href);
+                    }else{
+                        layer.msg(data.msg);
+                    }
+
+            });
+            return false;
+          });
+        });
+    </script>
+  </body>
+
+</html>
