@@ -6,6 +6,7 @@ import com.jfinal.kit.PropKit;
 
 public class Generator {
     private static Prop app = PropKit.use("app.properties");
+    // 李四
     public static void main(String[] args) {
         // base model 所使用的包名 哈哈
         String baseModelPkg = "exam.model.base";
