@@ -7,7 +7,7 @@ import com.jfinal.kit.PropKit;
 public class Generator {
     private static Prop app = PropKit.use("app.properties");
     public static void main(String[] args) {
-        // base model 所使用的包名
+        // base model 所使用的包名 哈哈
         String baseModelPkg = "exam.model.base";
 // base model 文件保存路径
         String baseModelDir = PathKit.getWebRootPath() + "/src/test/java/exam/model/base";
